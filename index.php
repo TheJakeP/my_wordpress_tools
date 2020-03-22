@@ -1,5 +1,6 @@
 <?php
 	include("make_database.php");
+	include("create_wordpress.php");
 //phpinfo();
 
 	$new_db_name = "coonley_law";
