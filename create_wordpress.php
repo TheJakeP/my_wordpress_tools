@@ -20,13 +20,21 @@ class wordpress_install {
 			echo "downloaded new zip";
 		}
 		$this->__unzip_wordpress_core($wp_zip_name);
-		$rename_successful = rename('../wordpress', "../". $this->site_name);
-		if (!$rename_successful){
+		echo file_exists($this->site_name);
+		if (file_exists("../".$this->site_name)){
 			$src = "../wordpress";
 			$dst = "../" . $this->site_name;
-			$this->recurse_copy($src, $dst);
-			unlink($source);
+			$this->recurse_move($src, $dst);
+			echo "file exists";
+			unlink($src);
+		} else {
+			echo "file does not exist";
+			$rename_successful = rename('../wordpress', "../". $this->site_name);
 		}
+//			if (!$rename_successful){
+			
+//			unlink($src);
+//		}
 		$this->__copy_wp_files();
 		
 	}
@@ -41,6 +49,22 @@ class wordpress_install {
 				} 
 				else { 
 					copy($src . '/' . $file,$dst . '/' . $file); 
+				} 
+			} 
+		} 
+		closedir($dir); 
+	} 
+	
+	private function recurse_move($src,$dst) { 
+		$dir = opendir($src); 
+		@mkdir($dst); 
+		while(false !== ( $file = readdir($dir)) ) { 
+			if (( $file != '.' ) && ( $file != '..' )) { 
+				if ( is_dir($src . '/' . $file) ) { 
+					$this->recurse_copy($src . '/' . $file,$dst . '/' . $file); 
+				} 
+				else { 
+					rename ($src . '/' . $file,$dst . '/' . $file); 
 				} 
 			} 
 		} 
